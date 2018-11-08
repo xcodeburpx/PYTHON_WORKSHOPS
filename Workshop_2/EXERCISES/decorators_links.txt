@@ -1,0 +1,5 @@
+https://code-maven.com/slides/python-programming/decorate-function-with-any-signature
+https://python.g-node.org/python-summerschool-2011/_media/materials/advanced_python/exercises_and_solutions.pdf
+^
+^
+<- Reszta to są iteratory i generatory <- do doczytania
