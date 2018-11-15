@@ -1,0 +1,226 @@
+Web Scrapping:
+    - process of data extraction from websites
+    - scrapper -> tool to harvest the data
+    - data can be:
+        - Text
+        - Images
+        - Videos
+        - Emails
+        - ...
+
+    1) Identify the website
+    2) Look up for the data from the DOM
+    3) Grab the data
+
+Spider and Robots.txt:
+    - Grabing the data and looking for the data -> Spider
+    - Spider:
+        - internet bot that browses a website, parses its DOM and
+          then returns back the desired content
+        - Example:
+            - Google Bot
+            - Yahoo Bot
+            - Bing Bot
+            - ...
+      Robots.txt:
+        - text ile defined bo the website admins.
+          In order to give instructions to web crawlers
+        - Robots.txt file contains two important instructions:
+          - User-Agent: The bot name
+          - Disallow: To forbid a specific page
+
+Scrapy:
+    - Types:
+        - Scrapy.Spider
+        - Generic:
+            - CrawlSpider -> Following links
+            - XMLFeedSpider
+            - CSVFeedSpider
+            - Sitemap Spider
+    - Components:
+        - Spider -> req -> Engine
+        - Engine -> req -> Scheduler
+        - Scheduler -> resp -> Engine
+        - Engine -> req -> Downloader
+        - Downloader -> resp -> Engine
+        - Engine -> resp -> Spider
+        - Engine -> resp -> Item Pipeline
+
+Scrappy Folders:
+    - main folder -> spiders -> create spiders
+    - items.py -> store the data in python dictionary
+    - middlewares.py -> SpiderMiddleWare -> Responses through spider
+                     -> DownloaderMiddleWare -> Process responses
+    - pipelines.py -> Item processing
+    - settings.py -> customize the behaviour of scrapy
+
+XPath Terminology:
+    - query language
+    - XML Path Language
+    - Based on tree representation of the XML/HTML document
+    - Nodes:
+        - Element Node -> <p></p>, <h1></h1>
+        - Attribute Node ->  @href, @id, @class
+        - Comment Node ->
+        - Text Node -> Text content in element node
+
+XPath Syntax:
+    - /html/body/h1 -> location syntax
+    - /html/body/ul/l1[3] -> predicates
+    - /html/body/h1[@id='title']
+    - //h4[@class='sub-title']
+
+XPath Axes:
+    - /descendant-or-self::node():
+        - / -> Context Node
+        - descendant-or-self -> axes, navigation
+        - node() -> any type of node
+    - /descendant-or-self::node()/child::h4[attribute::class='sub-title']
+    - //li/parent::node()
+    - //li/ancestor::node()
+    - //li/ancestor-or-self::node()
+    - //li/preceding::node()
+
+XPath Predicates:
+    - //li[3]
+    - //li[position() = 3 or position() = 4]
+    - //li[position() = last()-1 or position() = last()]
+    - //*[contains(@class,'title')]
+    - //*[starts-with(text(),'XPATH')]
+
+GoodRead XPath:
+    - //div[@class='quoteText']/text()[1] -> grab the quote
+    - //span[@class='authorOrTitle'] -> Authors
+    - //div[@class='greyText smallText left']/a/text() -> tags
+
+Pagination:
+    - Look for 'next_page' tag
+    - //a[@class='next_page']/@href
+
+Feed Exporter:
+    - docs.scrapy.org
+    - Serialization formats
+
+
+Start the scrap:
+    - scrapy crawl [name of spider]
+    - scrapy crawl [name of spider] -o [name].[format]
+
+
+
+MongoDB Terminology:
+    - Table -> Collection
+    - Row -> Document
+    - Column -> Field
+    - JSON
+    - BSON Document
+    - Object ID:
+        - Unique primary key
+        - Body:
+            - Seconds since UNIX epoch -> 4 bytes
+            - Machine Identifier -> 3 bytes
+            - PID -> 2 bytes
+            - Counter -> 3 bytes
+
+MongoDB Pipeline
+Robo 3T -> MongoDB Visualization
+Scrapy Shell:
+    - us-proxy:
+        - //li[@id='proxylisttable_next']/a
+
+Splash:
+    - install docker
+    - https://github.com/scrapy-plugins/scrapy-splash -> start docker
+    - add middlewares to settings.py
+    - #proxylisttable_next a -> CSS request
+    - Splash LUA Script:
+        function main(splash, args)
+          assert(splash:go(args.url))
+          assert(splash:wait(0.5))
+          assert(splash:runjs('document.querySelector("#proxylisttable_next a").click()'))
+          assert(splash:set_viewport_full())
+          return {
+            html = splash:html(),
+            png = splash:png(),
+            har = splash:har(),
+          }
+        end
+
+    - Next script:
+        function main(splash, args)
+          assert(splash:go(args.url))
+          assert(splash:wait(0.5))
+          result = {}
+          for i=1, 9, 1
+          do
+            assert(splash:runjs('document.querySelector("#proxylisttable_next a").click()'))
+            result[i] = splash:html()
+          end
+          return result
+        end
+
+    - Last demo script:
+        function main(splash, args)
+          assert(splash:go(args.url))
+          assert(splash:wait(0.5))
+          treat=require('treat')
+          result = {}
+          for i=1,9,1
+          do
+            assert(splash:runjs('document.querySelector("#proxylisttable_next a").click()'))
+            result[i] = splash:html()
+          end
+          return treat.as_array(result)
+        end
+
+
+ Create Spider:
+    - scrapy genspider -l
+    - scrapy genspider -t basic usproxy us-proxy.org
+
+ Crawling:
+    - request to categories page
+    - simultaneous requests to links
+    - response to Pagination
+    - rules = ():
+        - Rule Object -> logic to requests:
+            - LinkExtrator Object:
+                - allow
+                - deny
+                - restrict_css
+                - restrict_xpaths
+
+tutsplus:
+    - //a[@class='alphadex__item-link']
+    - //a[@class='pagination__button pagination__next-button']
+
+    - //li[@class='posts__post']
+    - .//a[@class='posts__post-title ']/h1/text()
+    - .//a[@class='posts__post-title ']/@href
+    - //span[@class='content-banner__title-breadcrumb-category']/text()
+
+Limits and how to break them:
+    - Rate Limit Requests:
+        - limit the number of HTTP request for this website per IP address
+    - User-Agent:
+        - forbid/ deny reqs coming from unknown or undefinded User-Agent
+    - Detection through honeypots:
+        - someone grabs the data -> touches the element with:
+            - rel='nofollow'
+            - style='display:none'
+
+- DO NOT HIT THE WEBSITE TO HARD! -> DDOS ATTACK!
+- Solution 1 -> CONCURRENT_REQUESTS=16 -> Change it
+- Solution 2 -> Add delay -> DOWNLOAD_DELAY = 0
+- Solution 3 -> Auto throttle extention -> AUTOTHROTTLE variables
+- Solution 4 -> HTTP caching -> HTTPCACHE_ENABLED
+
+- ROBOTSTXT_OBEY=True
+
+- USER_AGENT="example@example.com"
+
+
+
+
+
+
