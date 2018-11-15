@@ -1,0 +1,13 @@
+setup.py
+project.egg-info/PKG-INFO
+project.egg-info/SOURCES.txt
+project.egg-info/dependency_links.txt
+project.egg-info/entry_points.txt
+project.egg-info/top_level.txt
+project_101_5/__init__.py
+project_101_5/items.py
+project_101_5/middlewares.py
+project_101_5/pipelines.py
+project_101_5/settings.py
+project_101_5/spiders/__init__.py
+project_101_5/spiders/goodreads.py
